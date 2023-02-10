@@ -9,7 +9,6 @@ audioread==3.0.0
 audobject==0.7.7
 audresample==1.1.1
 backcall==0.2.0
-certifi @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_477u68wvzm/croot/certifi_1671487773341/work/certifi
 cffi==1.15.1
 charset-normalizer==3.0.1
 cloudpickle==2.2.1
