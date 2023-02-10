@@ -26,7 +26,7 @@ import copy
 
 
 def cli_parser() -> Namespace:
-    parser = ArgumentParser(description='Parliament corpus')
+    parser = ArgumentParser(description='Sami corpus')
     parser.add_argument('--datadir',
                         type=str,
                         default='./data')
@@ -517,16 +517,16 @@ def test() -> None:
     pass
 
 
-def aggregate_features(features: torch.Tensor = None, method: str = 'mean') -> torch.Tensor:
+def aggregate_features(features: torch.Tensor = None, method: str = 'mean', dim: int = 0) -> torch.Tensor:
     """
         :return:
     """
     if method == 'mean':
-        return torch.mean(features, dim=0).unsqueeze(0)
+        return torch.mean(features, dim=dim).unsqueeze(0)
     elif method == 'std':
-        return torch.std(features, dim=0).unsqueeze(0)
+        return torch.std(features, dim=dim).unsqueeze(0)
     elif method == 'meanstd':
-        return torch.hstack((torch.mean(features, dim=0), torch.std(features, dim=0))).unsqueeze(0)
+        return torch.hstack((torch.mean(features, dim=dim), torch.std(features, dim=dim))).unsqueeze(0)
     else:
         raise NotImplementedError(
             'Feature aggregator not available. Select between mean/std/meanstd')
@@ -658,7 +658,7 @@ def extract_features(datastruct: Dict = None, feature_set: str = 'kaldi', featur
                         hop_length=10,
                     )
                     y = spect(signal)
-                    y = aggregate_features(y, method=aggregation_method)
+                    y = aggregate_features(y, method=aggregation_method, dim=2).squeeze(1)
                 else:
                     raise NotImplementedError(
                         'Spectral feature selection not available. Select between mfccs/fbanks/spectrograms')
