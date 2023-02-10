@@ -157,7 +157,7 @@ def main() -> None:
         # TODO: fix option to add pre-defined split or remove entirely
         if len(config.split) > 0:
             train_data, test_data = random_split(df, splitx=[0.9, 0.1], label_dict=name2label, data_dir=config.datadir,
-                                                 include_labels=['sex'])
+                                                 include_labels=['gender'])
             # train_data, test_data = balanced_split(df, n_speakers_out=4, named_speakers_out=None, label_dict=name2label,
             #                                        data_dir=config.datadir, equal_sets=True, include_labels=['sex'])
         else:
@@ -166,8 +166,8 @@ def main() -> None:
             train_data, test_data = balanced_split(df, n_speakers_out=4, named_speakers_out=None, label_dict=name2label,
                                                    data_dir=config.datadir, equal_sets=True, include_labels=['sex'])
         # print stats
-        print_dataset_stats_parliament(train_data, desc='train')
-        print_dataset_stats_parliament(test_data, desc='test')
+        print_dataset_stats(train_data, labels_to_print=['labels', 'gender'], desc='train')
+        print_dataset_stats(test_data, labels_to_print=['labels', 'gender'], desc='test')
 
         print(f'\nExtracting features...')
         # extract features
@@ -229,8 +229,8 @@ def main() -> None:
                     X = [train_data['features'], test_data['features']]
                     Y = [train_data['labels'], test_data['labels']]
                     # print stats
-                    print_dataset_stats_parliament(train_data, desc='train')
-                    print_dataset_stats_parliament(test_data, desc='test')
+                    print_dataset_stats(train_data, desc='train')
+                    print_dataset_stats(test_data, desc='test')
                 print(f'File loaded!')
         except FileNotFoundError as e:
             print('File does not exist:', e)
@@ -293,23 +293,23 @@ def main() -> None:
         # f.savefig("/summary_plot1.png", bbox_inches='tight', dpi=600)
 
 
-def print_dataset_stats_parliament(dataset: Dict = None, desc: str = None) -> None:
+def print_dataset_stats(dataset: Dict = None, labels_to_print: List[str] = ['labels'], desc: str = None) -> None:
     # defs
     counts = lambda x, name, target: np.sum([label == target for label in x[name]])
     percent = lambda x, y: (x / y) * 100
 
     # init vars
-    n = len(dataset['labels'])
+    n = len(dataset[labels_to_print[0]])
 
     # print
     print(f"\nStats for {desc} dataset:")
-    print(
-        f"\topposition: {counts(dataset, 'labels', 'opposition')} ({percent(counts(dataset, 'labels', 'opposition'), n):.2f}%)"
-        f"\t-\t"
-        f"coalition: {counts(dataset, 'labels', 'coalition')} ({percent(counts(dataset, 'labels', 'coalition'), n):.2f}%)\n"
-        f"\tmen: {counts(dataset, 'sex', 'm')} ({percent(counts(dataset, 'sex', 'm'), n):.2f}%)"
-        f"\t-\t"
-        f"women: {counts(dataset, 'sex', 'f')} ({percent(counts(dataset, 'sex', 'f'), n):.2f}%)"
+    for label in labels_to_print:
+        discrete_labels = sorted(set(dataset[label]))
+        print(
+            f"\t{label.upper()}:\t" +
+            f"\t-\t".join(
+                [f"{sublabel}: {counts(dataset, label, sublabel)} ({percent(counts(dataset, label, sublabel), n):.2f}%)"
+                 for sublabel in discrete_labels])
         )
 
 
