@@ -1,4 +1,4 @@
-# Sami dialects
+# Sámi dialects
 
 The repository contains analysis and detection methods for the analysis and automatic detection of Sami dialects. This involves the analysis of the differences in speech of Sami dialects and the automatic detection of the different dialects. Our aim is to increase our understanding of the prosodic differences of these dialects and use them in evaluating them.
 
